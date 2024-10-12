@@ -1,0 +1,15 @@
+- name: "Deploy {{ name }} service"
+  block:
+    - name: "Deploy [{{ name }}] service"
+      community.docker.docker_swarm_service:
+        name: "{{ name }}_swarm"
+        image: "{{ registry_name }}{{ name }}:{{ version }}"
+        state: present
+        force_update: true
+        networks:
+          - name: "{{ networkName }}"
+        publish:
+          - mode: ingress
+            protocol: tcp
+            published_port: 3001
+            target_port: 80

@@ -1,0 +1,9 @@
+galaxy_info:
+  author: Oleksandr Hrynkov
+  description: Deploy and configure Vim with plugins
+  company: IT SBGS
+  min_ansible_version: 2.12
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all

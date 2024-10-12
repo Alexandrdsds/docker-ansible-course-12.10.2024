@@ -1,0 +1,30 @@
+- name: Clone repository
+  ansible.builtin.git:
+    repo: "https://github.com/AlariCode/docker-demo.git"
+    dest: "{{ git_folder }}"
+    version: block-14
+
+- name: Change Dockerfile for app service
+  ansible.builtin.lineinfile:
+    dest: "{{ git_folder }}/apps/app/Dockerfile"
+    insertafter: "ARG env=prod"
+    line: "RUN npm install --save-dev @babel/plugin-proposal-private-property-in-object"
+
+- name: Create docker image
+  docker_image:
+    name: "{{ registry_name }}{{ item.name }}"
+    tag: "{{ item.version }}"
+    push: yes
+    force_source: true
+    force_tag: true
+    build:
+      path: "{{ git_folder }}" # context for Dockerfile
+      dockerfile: "{{ git_folder }}/apps/{{ item.name  }}/Dockerfile" # where Dockerfile stays
+    source: build # build docker image from Dockerfile
+  loop: "{{ services | rejectattr('name', 'in', non_build_services | map(attribute='name') | list) | list }}"
+#  loop: "{{ services }} | difference(non_build_services)"
+
+# - name: Remove git repository
+#   ansible.builtin.file:
+#     state: absent
+#     path: "{{ git_folder }}"

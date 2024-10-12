@@ -1,0 +1,23 @@
+- name: Initialize cluster swarm
+  docker_swarm:
+    state: present
+    advertise_addr: "{{ advertise_address }}"
+  register: token
+
+- name: Folder for tokens exists
+  file:
+    path: ./tokens
+    state: directory
+  delegate_to: localhost
+
+- name: Save token for manager
+  copy:
+    dest: ./tokens/token-manager
+    content: "{{ token.swarm_facts.JoinTokens.Manager }}"
+  delegate_to: localhost
+
+- name: Save token for worker
+  copy:
+    dest: ./tokens/token-worker
+    content: "{{ token.swarm_facts.JoinTokens.Worker }}"
+  delegate_to: localhost

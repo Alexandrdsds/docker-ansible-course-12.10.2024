@@ -1,0 +1,7 @@
+- name: Connect to swarm cluster
+  vars:
+    token: "{{ lookup('file', '../../tokens/token-{{ type }}')}}"
+  docker_swarm:
+    state: join
+    remote_addrs: "{{ advertise_address }}"
+    join_token: "{{ token }}"

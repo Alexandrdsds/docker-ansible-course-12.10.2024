@@ -1,0 +1,63 @@
+- name: Install docker and docker-compose
+  block:
+    - name: Install necessary packages
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - apt-transport-https
+          - lsb-release
+          - software-properties-common
+          - python3-pip
+
+        state: present
+        update_cache: true
+
+    - name: Add Docker GPG Keys
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add apt repository docker
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+        update_cache: true
+
+    - name: Install Docker
+      ansible.builtin.apt:
+        name: docker-ce
+        state: present
+
+    - name: Ensure that docker exsists
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+        enabled: true
+
+    - name: Get latest version of docker-compose
+      ansible.builtin.uri:
+        url: https://github.com/docker/compose/releases/latest
+        body_format: json
+      register: compose_latest
+
+    - name: Add apt repository docker-compose
+      ansible.builtin.get_url:
+        url: "https://github.com/docker/compose/releases/download/{{ compose_latest.url.split('/')[-1] }}/docker-compose-linux-{{ ansible_userspace_architecture }}"
+        dest: "/usr/local/bin/docker-compose"
+        mode: "0755"
+
+    - name: Install additional python packages
+      ansible.builtin.pip:
+        name: docker
+
+    - name: add local user to docker group
+      user:
+        name: "{{  ansible_env.USER }}"
+        groups: docker
+        append: true
+
+    # - name: Unconditionally reboot the machine with all defaults
+    #   ansible.builtin.reboot:
+
+  become: true

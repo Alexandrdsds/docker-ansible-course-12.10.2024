@@ -1,0 +1,16 @@
+- name: Create secret file
+  include_tasks: "../secret.yml"
+
+- name: "Deploy {{ name }} service"
+  block:
+    - name: "Deploy [{{ name }}] service"
+      community.docker.docker_swarm_service:
+        name: "{{ name }}_swarm"
+        image: "{{ registry_name }}{{ name }}:{{ version }}"
+        state: present
+        force_update: true
+        networks:
+          - name: "{{ networkName }}"
+        secrets:
+          - secret_name: "{{ name }}.env"
+            filename: "/opt/app/.env"

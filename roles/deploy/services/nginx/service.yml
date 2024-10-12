@@ -1,0 +1,27 @@
+- name: Create config file
+  include_tasks: "../config.yml"
+  loop:
+    - nginx.conf
+  loop_control:
+    loop_var: config_item
+
+- name: "Deploy {{ name }} service"
+  block:
+    - name: "Deploy [{{ name }}] service"
+      community.docker.docker_swarm_service:
+        name: "{{ name }}_swarm"
+        image: "nginx:{{ version }}"
+        placement:
+          constraints:
+            - node.labels.nginx_swarm == true
+        state: present
+        networks:
+          - name: "{{ networkName }}"
+        publish:
+          - mode: ingress
+            protocol: tcp
+            published_port: 80
+            target_port: 80
+        configs:
+          - config_name: "nginx.conf"
+            filename: "/etc/nginx/nginx.conf"

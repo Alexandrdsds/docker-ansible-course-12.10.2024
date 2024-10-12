@@ -1,0 +1,6 @@
+argument_specs:
+  main:
+    short_description: Configure servers for work with Docker
+    author: Oleksandr Hrynkov
+# dependencies:
+#   - role: role_demo

@@ -1,0 +1,14 @@
+# - name: deploying
+#   hosts: deploy
+#   tasks:
+- name: Create a network
+  docker_network:
+    name: "{{ networkName }}"
+    driver: overlay
+
+- name: Deploy services
+  ansible.builtin.include_tasks: "../services/{{ item.name }}/service.yml"
+  vars:
+    name: "{{ item.name  }}"
+    version: "{{ item.version }}"
+  loop: "{{ services }}"

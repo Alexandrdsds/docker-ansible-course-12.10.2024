@@ -1,0 +1,13 @@
+- name: "Check config in docker {{ name }} container"
+  block:
+    - name: "Create config for [{{ name }}] service (from a file on the control machine)"
+      include_tasks: "config-create.yml"
+
+  rescue:
+    - name: "Delete exist {{ name }} container"
+      community.docker.docker_swarm_service:
+        name: "{{ name }}_swarm"
+        state: absent
+
+    - name: "Create config for [{{ name }}] service (from a file on the control machine)"
+      include_tasks: "config-create.yml"
