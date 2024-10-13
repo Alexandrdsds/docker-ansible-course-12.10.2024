@@ -1,0 +1,23 @@
+- name: Set node availability
+  docker_node:
+    hostname: "{{ NODE }}"
+    availability: drain
+  register: result_drain
+  ignore_errors: true
+
+- name: check running containers
+  docker_host_info:
+  register: result
+  delay: 5
+  retries: 10
+  until: result.host_info.ContainersRunning == 0
+  delegate_to: "{{ NODE }}"
+
+- name: Remove node from swarm cluster
+  command: "docker node rm {{ NODE }} --force"
+  ignore_errors: true
+
+- name: Execute command swarm leave on removed node
+  command: "docker swarm leave"
+  delegate_to: "{{ NODE }}"
+  ignore_errors: true

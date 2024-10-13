@@ -1,0 +1,27 @@
+- name: "Deploy {{ name }} service"
+  block:
+    - name: "Deploy [{{ name }}] service"
+      community.docker.docker_swarm_service:
+        name: "{{ name }}"
+        image: "{{ name }}:{{ version }}"
+        mounts:
+          - source: "{{ ansible_user_dir }}/registry"
+            target: /var/lib/registry
+            type: bind
+        placement:
+          constraints:
+            - node.labels.registry == true
+        state: present
+        env:
+          REGISTRY_HTTP_ADDR: "0.0.0.0:5000"
+        publish:
+          - mode: ingress
+            protocol: tcp
+            published_port: 5000
+            target_port: 5000
+
+- name: Create label nginx_swarm
+  docker_node:
+    hostname: server1
+    labels:
+      registry: "true"

@@ -25,3 +25,9 @@
         configs:
           - config_name: "nginx.conf"
             filename: "/etc/nginx/nginx.conf"
+
+- name: Create label nginx_swarm
+  docker_node:
+    hostname: server1
+    labels:
+      nginx_swarm: "true"

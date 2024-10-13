@@ -22,9 +22,8 @@
       dockerfile: "{{ git_folder }}/apps/{{ item.name  }}/Dockerfile" # where Dockerfile stays
     source: build # build docker image from Dockerfile
   loop: "{{ services | rejectattr('name', 'in', non_build_services | map(attribute='name') | list) | list }}"
-#  loop: "{{ services }} | difference(non_build_services)"
 
-# - name: Remove git repository
-#   ansible.builtin.file:
-#     state: absent
-#     path: "{{ git_folder }}"
+- name: Remove git repository
+  ansible.builtin.file:
+    state: absent
+    path: "{{ git_folder }}"
