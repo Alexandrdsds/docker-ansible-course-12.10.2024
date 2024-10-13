@@ -11,8 +11,6 @@ rmqDefaults:
 registry_name: localhost:5000/
 
 services:
-  - name: registry
-    version: latest
   - name: api
     version: latest
   - name: app

@@ -8,3 +8,4 @@
         if type == 'worker' else
         hostvars['server1']['ansible_facts']['token_manager']
       }}
+  become: true

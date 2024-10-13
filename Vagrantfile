@@ -11,6 +11,7 @@ Vagrant.configure("2") do |config|
 				s.inline = <<-SHELL
 				echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
 				echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+				echo "nameserver 8.8.8.8" > /etc/resolv.conf
 				SHELL
 			end
 

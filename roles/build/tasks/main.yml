@@ -3,6 +3,11 @@
     repo: "https://github.com/AlariCode/docker-demo.git"
     dest: "{{ git_folder }}"
     version: block-14
+  register: repo_clone
+  failed_when:
+    - repo_clone.failed
+    - not 'Local modifications exist in repository' in repo_clone.msg
+  ignore_errors: true
 
 - name: Change Dockerfile for app service
   ansible.builtin.lineinfile:
@@ -22,6 +27,7 @@
       dockerfile: "{{ git_folder }}/apps/{{ item.name  }}/Dockerfile" # where Dockerfile stays
     source: build # build docker image from Dockerfile
   loop: "{{ services | rejectattr('name', 'in', non_build_services | map(attribute='name') | list) | list }}"
+  become: true
 
 - name: Remove git repository
   ansible.builtin.file:

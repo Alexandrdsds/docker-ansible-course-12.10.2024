@@ -1,9 +1,14 @@
-- name: "Deploy {{ name }} service"
+- name: "Create directory for images"
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir}}/registry"
+    state: directory
+
+- name: "Deploy registry service"
   block:
-    - name: "Deploy [{{ name }}] service"
+    - name: "Deploy [registry] service"
       community.docker.docker_swarm_service:
-        name: "{{ name }}"
-        image: "{{ name }}:{{ version }}"
+        name: "registry"
+        image: "registry:latest"
         mounts:
           - source: "{{ ansible_user_dir }}/registry"
             target: /var/lib/registry
