@@ -1,0 +1,11 @@
+In the beginning run command
+ansible-playbook course.yml --tags='preconfig'
+Then
+ansible-playbook course.yml --tags='swarm_init,swarm_join'
+Then
+ansible-playbook course.yml --tags='deploy_registry'
+Then
+ansible-playbook course.yml --tags='build'
+Then
+ansible-playbook course.yml --tags='deploy'
+Done!!!
